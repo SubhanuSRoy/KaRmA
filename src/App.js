@@ -28,7 +28,7 @@ function App() {
       {!isLoggedIn ? (
         <Routes>
           <Route index element={<SignIn />} />
-          <Route path="*" element={<Navigate to="/" />} />
+          {/* <Route path="*" element={<Navigate to="/" />} /> */}
         </Routes>
       ) : (
         <Routes>
@@ -44,6 +44,7 @@ function App() {
                 }
               />
             ))}
+            <Route path="*" element={<Navigate to="/" />} />
           </Route>
         </Routes>
       )}

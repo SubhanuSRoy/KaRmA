@@ -169,6 +169,11 @@ function GenerateReport() {
           </svg>
         </button>
       </form>
+
+      <div className="w-full p-4">
+        <h1 className="text-2xl font-bold my-4">{reportFormat.head.title}</h1>
+        <p className="text-lg font-medium">{reportFormat.head.subtitle}</p>
+      </div>
     </div>
   );
 }

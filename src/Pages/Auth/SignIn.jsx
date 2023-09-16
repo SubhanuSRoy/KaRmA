@@ -13,12 +13,13 @@ const SignIn = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(userActions.login({ empID: empID, userType: "Employee" }));
-    navigate("/chat");
+    navigate("chat/Performance");
   };
 
-  const handleAdminLogin = () => {
+  const handleAdminLogin = (e) => {
+    e.preventDefault();
     dispatch(userActions.login({ empID: "admin", userType: "Admin" }));
-    navigate("/chat");
+    navigate("chat/Performance");
   };
 
   return (

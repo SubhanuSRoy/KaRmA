@@ -41,7 +41,7 @@ function KRAConverse() {
     const prompt = `I am employee with the Emp_ID=${empID} and help me with the following query: ${searchQuery}`
     axios
       // .post(process.env.REACT_APP_CHAT_URL + "chat/", {
-      .post("http://172.20.10.3:8000/query_sql", {
+      .post("http://172.20.10.3:8000/query_tables/", {
         query: prompt,
       })
       .then((res) => {

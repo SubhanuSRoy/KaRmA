@@ -8,14 +8,10 @@ import SpeechRecognition, {
 import { BiUserCircle } from "react-icons/bi";
 import { useSelector } from "react-redux";
 function Converse() {
-  const {
-    transcript,
-    listening,
-    resetTranscript,
-    browserSupportsSpeechRecognition,
-  } = useSpeechRecognition();
+  const { transcript } = useSpeechRecognition();
 
   const [searchQuery, setSearchQuery] = useState(null);
+  const [listening, setListening] = useState(false);
   const [AIResponse, setAIResponse] = useState("");
   const [loading, setloading] = useState(false);
 
@@ -24,9 +20,24 @@ function Converse() {
   const empID = useSelector((state) => state.user.empID);
 
   const listen = () => {
-    resetTranscript();
-    SpeechRecognition.startListening();
-    setSearchQuery(transcript);
+    setListening(true);
+    // setLoading(true);
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.start();
+    recognition.onresult = (e) => {
+      const query = e.results[0][0].transcript;
+      setSearchQuery(query);
+      setListening(false);
+      // setLoading(false);
+      recognition.stop();
+    };
+    recognition.onerror = (e) => {
+      console.log(e);
+      setListening(false);
+      // setLoading(false);
+    };
   };
   const updateQuery = () => {
     SpeechRecognition.stopListening();
@@ -38,17 +49,19 @@ function Converse() {
     e.preventDefault();
     setloading(true);
     console.log(searchQuery);
-    const prompt = `I am employee with the Emp_ID=${empID} and help me with the following query: ${searchQuery}`
+    const prompt = `I am employee with the Emp_ID=${empID} and help me with the following query: ${searchQuery}`;
     axios
       // .post(process.env.REACT_APP_CHAT_URL + "chat/", {
-      .post("http://172.20.10.3:8000/query_sql", {
+      .post("http://172.20.10.3:8000/query_tables/", {
         query: prompt,
       })
       .then((res) => {
         console.log(res);
-        setAIResponse(res.data.result);
+        setAIResponse(res.data);
+        setloading(false);
       })
       .catch((error) => {
+        setloading(false);
         console.log(error.message);
       });
   };
@@ -203,12 +216,10 @@ function Converse() {
               }}
               type="text"
             />
-
             {!listening && (
               <button
-              
                 onClick={listen}
-                class="absolute  right-2 rounded-full p-2  text-gray-50 hover:bg-primary"
+                class="absolute  right-2 rounded-full p-2  text-gray-800 hover:bg-prim hover:text-white"
               >
                 <span class="sr-only">Start Listening</span>
                 <svg
@@ -229,9 +240,8 @@ function Converse() {
             )}
             {listening && (
               <button
-                type="submit"
                 onClick={updateQuery}
-                class="absolute right-2 rounded-full p-2  text-red-500 bg-primary"
+                class="absolute right-2 rounded-full p-2  text-red-500 bg-gray-50 hover:bg-red-500 hover:text-white"
               >
                 <span class="sr-only">Stop Listening</span>
                 <svg
